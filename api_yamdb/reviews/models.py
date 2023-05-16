@@ -20,7 +20,7 @@ class Category(models.Model):
         return self.name
     
 
-class Genres(models.Model):
+class Genre(models.Model):
     name = models.CharField(
         verbose_name="Жанр",
         max_length=256)
@@ -48,17 +48,14 @@ class Title(models.Model):
     description = models.TextField(
         verbose_name="Описание",
         null=True, blank=True)
-    genre = models.ManyToManyField(Genres,
+    genre = models.ManyToManyField(Genre,
                                    verbose_name="Жанр",
-                                   through="GenreTitle")
+                                   blank=True)
     category = models.ForeignKey(Category,
                                  verbose_name="Категория",
                                  related_name="titles",
                                  on_delete=models.SET_NULL,
-                                 null=True)
-    rating = models.IntegerField(
-        verbose_name="Рейтинг",
-        null=True, default=None)
+                                 null=True, blank=True)
 
     class Meta:
         verbose_name = "Произведение"
@@ -67,17 +64,3 @@ class Title(models.Model):
     
     def __str__(self):
         return self.name
-
-
-class GenreTitle(models.Model):
-    title = models.ForeignKey(Title,
-                              verbose_name="Произведение",
-                              on_delete=models.CASCADE)
-    genre = models.ForeignKey(Genres,
-                              verbose_name="Жанр",
-                              on_delete=models.SET_NULL,
-                              null=True)
-    
-    class Meta:
-        verbose_name = "Произведение и жанр"
-        verbose_name_plural = "Произведения и жанры"
