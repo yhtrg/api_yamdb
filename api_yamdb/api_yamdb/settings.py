@@ -1,4 +1,7 @@
+import os
 from pathlib import Path
+from datetime import timedelta
+from django.utils.translation import get_language
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -15,12 +18,18 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'users',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'django_filters',
+    'djoser',
+    'reviews',
+    'api',
 ]
 
 MIDDLEWARE = [
@@ -59,10 +68,14 @@ WSGI_APPLICATION = 'api_yamdb.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': os.environ.get('DB_ENGINE'),
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('POSTGRES_USER'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT'),
     }
-}
+} 
 
 
 # Password validation
@@ -101,3 +114,51 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = ((BASE_DIR / 'static/'),)
+
+AUTH_USER_MODEL = 'users.User'
+
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+
+EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
+
+EMAIL_FOR_AUTH_LETTERS = 'donotrespond@yamdb.com'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 5,
+}
+
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=5),
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
+
+
+SENDER_EMAIL = 'yambd@example.com'
+
+current_language = get_language()
+if get_language() == 'ru-RU':
+    SIGNUP_EMAIL_MESSAGE = {
+        'theme': 'YaMBD Регистрация на сайте.',
+        'message': ('Уважаемый пользователь!\n'
+                    'На ваши контактные была произведена регистрация на сайте'
+                    ' Yambd. Для получения токена для доступа к сайту'
+                    ' используйте данный код:'),
+        'sender': SENDER_EMAIL
+    }
+else:
+    SIGNUP_EMAIL_MESSAGE = {
+        'theme': 'YaMBD Register on the site.',
+        'message': ('Dear user!\n'
+                    'Your contacts have been registered on the site'
+                    ' Yambd. To get a token to access the site, use'
+                    ' given code:'),
+        'sender': SENDER_EMAIL
+    }
