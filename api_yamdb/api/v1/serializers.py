@@ -31,7 +31,6 @@ class TitleSerializer(serializers.ModelSerializer):
 
 
 class ReadOnlyTitleSerializer(serializers.ModelSerializer):
-    rating = serializers.IntegerField()
     genre = GenreSerializer(many=True)
     category = CategorySerializer()
     
@@ -39,5 +38,5 @@ class ReadOnlyTitleSerializer(serializers.ModelSerializer):
         model = Title
         fields = ("id", "name", "year",
                   "description", "genre", "category")
-        read_only_fields = ("name", "year", "rating",
+        read_only_fields = ("name", "year",
                             "description", "genre", "category")
