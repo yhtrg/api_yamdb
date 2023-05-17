@@ -5,7 +5,7 @@ from django.utils.functional import cached_property
 from rest_framework import permissions, viewsets
 from rest_framework.pagination import LimitOffsetPagination
 
-from api import serializers
+from api.v1 import serializers
 from api.permissions import IsAuthorOrAdmin
 from reviews.models import Review, Title
 

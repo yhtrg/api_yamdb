@@ -1,6 +1,8 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from api_yamdb.settings import MODEL_STR_LIMIT
+from users.models import User
+
 
 class Review(models.Model):
     text = models.TextField(verbose_name = 'Отзыв')
