@@ -19,17 +19,6 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 class SignUpViewSet(APIView):
-    """
-    Регистрация нового пользователя, принимает только POST запросы.
-    Использование /api/v1/auth/signup/
-    data:
-    {
-    "email": "string",
-    "username": "string"
-     }.
-    После успешной регистрации будет на указанный email будет отправлено
-    письмо с кодом для получения и обновления токена.
-    """
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
@@ -51,34 +40,11 @@ class SignUpViewSet(APIView):
 
 
 class GetTokenViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
-    """
-    Получение нового токена и обновление существующего.
-    endpoint: /api/v1/auth/token/
-    data:
-    {
-    "email": "string",
-    "confirmation_code": "string"
-     }
-    response: {"token": "string"}
-    """
     serializer_class = TokenSerializer
     permission_classes = (permissions.AllowAny,)
 
 
 class SelfUserViewSet(APIView):
-    """
-    Управление собственными данными пользователя.
-    endpoint: /api/v1/users/me/ - GET, PATH
-    data:
-    {
-        "username": "string",
-        "email": "user@example.com",
-        "first_name": "string",
-        "last_name": "string",
-        "bio": "string",
-        "role": "user" - read only
-    }
-    """
     permission_classes = [permissions.IsAuthenticated, ]
 
     def get(self, request):

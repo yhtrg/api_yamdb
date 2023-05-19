@@ -48,7 +48,6 @@ class SignUpSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    """Serialize users objects for admin."""
 
     class Meta:
         model = User

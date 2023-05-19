@@ -40,7 +40,7 @@ class OnlyOwnAccount(permissions.BasePermission):
 class IsAuthorOrAdmin(permissions.BasePermission):
     """Permission for Review and Comment"""
     def has_permission(self, request, view):
-        if request.method in permissions.SAFE_METHODS or request.user.is_authenticated:
+        if request.method in permissions.SAFE_METHODS:
             return True
         return False
 
