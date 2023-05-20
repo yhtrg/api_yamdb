@@ -1,31 +1,26 @@
-from django.core.mail import send_mail
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import mixins, permissions, status, viewsets
-from rest_framework.response import Response
-from rest_framework.views import APIView
 from typing import List
 
+from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from django.utils.functional import cached_property
-from rest_framework import permissions, viewsets, filters
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, mixins, permissions, status, viewsets
 from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from reviews.models import Category, Genre, Review, Title
 from users.models import User
 
-from reviews.models import Review, Title, Category, Genre
-
-from .permissions import AdminOnly, IsAuthorOrAdmin, IsAdminOrReadOnly
-from .serializers import (CustomUserSerializer,
-                          SignUpSerializer,
-                          UserSerializer,
-                          TokenSerializer,
-                          CommentSerializer,
-                          ReviewSerializer,
-                          CategorySerializer,
-                          GenreSerializer,
-                          TitleSerializer,
-                          ReadOnlyTitleSerializer)
-from .filters import TitleFilter
 from api_yamdb.settings import SIGNUP_EMAIL_MESSAGE
+
+from .filters import TitleFilter
+from .permissions import AdminOnly, IsAdminOrReadOnly, IsAuthorOrAdmin
+from .serializers import (CategorySerializer, CommentSerializer,
+                          CustomUserSerializer, GenreSerializer,
+                          ReadOnlyTitleSerializer, ReviewSerializer,
+                          SignUpSerializer, TitleSerializer, TokenSerializer,
+                          UserSerializer)
+
 
 class UserViewSet(viewsets.ModelViewSet):
     lookup_field = 'username'
@@ -34,7 +29,7 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
 
 
-class SignUpViewSet(APIView):
+class SignUpViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
@@ -60,7 +55,7 @@ class GetTokenViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     permission_classes = (permissions.AllowAny,)
 
 
-class SelfUserViewSet(APIView):
+class SelfUserViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated, ]
 
     def get(self, request):

@@ -1,8 +1,8 @@
 import os
-from pathlib import Path
 from datetime import timedelta
-from django.utils.translation import get_language
+from pathlib import Path
 
+from django.utils.translation import get_language
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -18,7 +18,6 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'users',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -27,11 +26,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'api.apps.ApiConfig',
     'reviews.apps.ReviewsConfig',
+    'users.apps.UsersConfig',
     'rest_framework',
     'django_filters',
     'djoser',
-    'reviews',
-    'api',
+
 ]
 
 MIDDLEWARE = [
@@ -45,6 +44,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'api_yamdb.urls'
+
 
 TEMPLATES_DIR = os.path.join(BASE_DIR / 'templates')
 TEMPLATES = [
@@ -70,14 +70,10 @@ WSGI_APPLICATION = 'api_yamdb.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': os.environ.get('DB_ENGINE'),
-        'NAME': os.environ.get('DB_NAME'),
-        'USER': os.environ.get('POSTGRES_USER'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-        'HOST': os.environ.get('DB_HOST'),
-        'PORT': os.environ.get('DB_PORT'),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
-} 
+}
 
 
 # Password validation
@@ -126,9 +122,6 @@ EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
 EMAIL_FOR_AUTH_LETTERS = 'donotrespond@yamdb.com'
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-    ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
@@ -166,3 +159,5 @@ else:
     }
 
 MODEL_STR_LIMIT = 15
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

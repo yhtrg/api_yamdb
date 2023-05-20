@@ -141,7 +141,7 @@ class Test05ReviewAPI:
         )
         title_0_reviews_count += 1
 
-        assert type(response.json().get('id')) == int, (
+        assert isinstance(response.json().get('id'), int), (
             'Проверьте, что POST-запрос авторизованного пользователя к '
             '`/api/v1/titles/{title_id}/reviews/` возвращает данные '
             'созданного объекта. Сейчас поля `id` нет в ответе или его '

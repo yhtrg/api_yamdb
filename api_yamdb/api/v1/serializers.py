@@ -1,13 +1,13 @@
 from django.contrib.auth.tokens import default_token_generator
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.validators import UniqueTogetherValidator
-from django.db.models import Avg
-
+from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
-from reviews.models import Comment, Review, Title, Category, Genre
-from .validators import validate_username, validate_email
+
+from .validators import validate_email, validate_username
 
 
 class TokenSerializer(serializers.ModelSerializer):
@@ -56,7 +56,6 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('username', 'email', 'first_name',
                   'last_name', 'bio', 'role',)
-        validators = (validate_username(fields=('username',)),)
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -114,7 +113,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class GenreSerializer(serializers.ModelSerializer):
-    
+
     class Meta:
         model = Genre
         fields = ('name', 'slug')
@@ -126,7 +125,7 @@ class TitleSerializer(serializers.ModelSerializer):
                                          many=True)
     category = serializers.SlugRelatedField(slug_field='slug',
                                             queryset=Category.objects.all())
-    
+
     class Meta:
         model = Title
         fields = ('id', 'name', 'year',
@@ -137,7 +136,7 @@ class ReadOnlyTitleSerializer(serializers.ModelSerializer):
     genre = GenreSerializer(many=True)
     category = CategorySerializer()
     rating = serializers.SerializerMethodField()
-    
+
     class Meta:
         model = Title
         fields = ('id', 'name', 'year',
@@ -146,6 +145,6 @@ class ReadOnlyTitleSerializer(serializers.ModelSerializer):
         read_only_fields = ('name', 'year',
                             'description', 'genre',
                             'category', 'rating')
-        
-        def get_rating(self, obj):
-            return Review.objects.filter(title=obj.id).aggregate(Avg('score'))
+
+    def get_rating(self, obj):
+        return Review.objects.filter(title=obj.id).aggregate(Avg('score'))
