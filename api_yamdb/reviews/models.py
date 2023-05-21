@@ -73,6 +73,11 @@ class Title(models.Model):
 
 class Review(models.Model):
     text = models.TextField(verbose_name='Отзыв')
+    title = models.ForeignKey(
+        Title,
+        on_delete=models.CASCADE,
+        verbose_name='Произведение'
+    )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -82,11 +87,7 @@ class Review(models.Model):
         verbose_name="Оценка",
         validators=[MinValueValidator(1), MaxValueValidator(10)],
     )
-    title = models.ForeignKey(
-        Title,
-        on_delete=models.CASCADE,
-        verbose_name='Произведение'
-    )
+    
     pub_date = models.DateTimeField(
         verbose_name='Дата добавления',
         auto_now_add=True,

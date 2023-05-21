@@ -1,15 +1,14 @@
 from django.urls import include, path
 from rest_framework import routers
+from rest_framework_simplejwt.views import TokenRefreshView
 
 from .views import (CategoryViewSet, CommentViewSet, GenreViewSet,
-                    ReviewViewSet, SelfUserViewSet, SignUpViewSet,
-                    TitleViewSet, UserViewSet)
+                    ReviewViewSet, TitleViewSet,
+                    UserViewSet, token, signup)
 
 router = routers.DefaultRouter()
 
 router.register('users', UserViewSet, basename='User')
-router.register('signup', SignUpViewSet, basename='SignUp')
-router.register('selfuser', SelfUserViewSet, basename='SelfUser')
 router.register(
     r'titles/(?P<title_id>\d+)/reviews',
     ReviewViewSet,
@@ -24,7 +23,14 @@ router.register('categories', CategoryViewSet, basename='Category')
 router.register('genres', GenreViewSet, basename='Genre')
 router.register('titles', TitleViewSet, basename='Title')
 
+authpatterns = [
+    path('signup/', signup, name='signup'),
+    path('token/', token, name='token'),
+    path('token/refresh/', TokenRefreshView.as_view, name='token_refresh')
+]
+
 
 urlpatterns = [
     path('v1/', include(router.urls)),
+    path('v1/auth/', include(authpatterns))
 ]
