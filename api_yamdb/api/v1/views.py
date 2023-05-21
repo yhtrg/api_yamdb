@@ -70,6 +70,12 @@ class UserViewSet(viewsets.ModelViewSet):
     lookup_field = "username"
     filter_backends = (filters.SearchFilter,)
     search_fields = ("username",)
+
+    def update(self, request, *args, **kwargs):
+        if request.method == "PUT":
+            return response.Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        return super().update(request, *args, **kwargs)
+    
     @action(
         detail=False,
         methods=["GET", "PATCH"],
@@ -78,20 +84,19 @@ class UserViewSet(viewsets.ModelViewSet):
     )
     def get_self_user_page(self, request):
         if request.method == "GET":
-            serializer = UserSerializer(request.user)
+            serializer = self.serializer_class(request.user)
             return response.Response(
                 serializer.data,
                 status=status.HTTP_200_OK,
             )
-        serializer = UserSerializer(
+        serializer = self.serializer_class(
             request.user,
             data=request.data,
             partial=True,
         )
         serializer.is_valid(raise_exception=True)
-        serializer.save(role=request.user.role, partial=True)
+        serializer.save(role=request.user.role)
         return response.Response(serializer.data, status=status.HTTP_200_OK)
-
 
 
 class ReviewViewSet(viewsets.ModelViewSet):

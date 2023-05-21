@@ -7,10 +7,10 @@ def validate_username(value):
         raise ValidationError('Недопустимое имя пользователя!')
     elif User.objects.filter(username=value).exists():
         raise ValidationError('Пользователь с таким именем '
-                              'уже зарегестрирован')
+                              'уже зарегистрирован')
 
 
 def validate_email(value):
     if User.objects.filter(email=value).exists():
         raise ValidationError('Пользователь с такой почтой '
-                              'уже зарегестрирован')
+                              'уже зарегистрирован')

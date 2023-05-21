@@ -1,10 +1,8 @@
-
-from django.db.models import Avg
-from django.shortcuts import get_object_or_404
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.validators import UniqueTogetherValidator
+
 from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
 
@@ -14,31 +12,37 @@ class TokenSerializer(serializers.Serializer):
     confirmation_code = serializers.CharField()
 
     class Meta:
-        fields = ("username", "confirmation_code")
+        fields = ('username', 'confirmation_code')
 
 
 class SignUpSerializer(serializers.Serializer):
-    email = serializers.EmailField(required=True)
-    username = serializers.CharField(
-        required=True, validators=[UnicodeUsernameValidator]
-    )
+    email = serializers.EmailField(max_length=254,
+                                   allow_blank=False,
+                                   required=True)
+    username = serializers.RegexField(regex=r'^[\w.@+-]+$',
+                                      required=True,
+                                      max_length=150)
 
     def validate(self, data):
-        if data["username"] == "me":
-            raise ValidationError("Пользователь не может иметь имя 'me'")
+        if data['username'] == 'me':
+            raise ValidationError('Пользователь не может иметь имя "me"')
         return data
+    
+    class Meta:
+        model = User
+        fields = ('email', 'username')
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-            "username",
-            "first_name",
-            "last_name",
-            "email",
-            "bio",
-            "role",
+            'username',
+            'first_name',
+            'last_name',
+            'email',
+            'bio',
+            'role',
         )
 
 
