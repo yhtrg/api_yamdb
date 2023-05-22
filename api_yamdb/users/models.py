@@ -95,4 +95,5 @@ class User(AbstractUser):
                 name="Пользователь не может быть назван me!",
             )
         ]
+        ordering = ('username',)
         

@@ -51,7 +51,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         slug_field='username',
         read_only=True,
     )
-
+    
     class Meta:
         model = Review
         fields = (
@@ -65,12 +65,16 @@ class ReviewSerializer(serializers.ModelSerializer):
             'id',
             'pub_date',
         )
-        validators = [
-            UniqueTogetherValidator(
-                queryset=Review.objects.all(),
-                fields=('author', 'title'),
-            ),
-        ]
+
+    def validate(self, data):
+        author = self.context.get('request').user
+        title_id = self.context.get('view').kwargs['title_id']
+        method = self.context.get('request').method
+        if (Review.objects.filter(author=author, title=title_id).exists()
+                and method == 'POST'):
+            raise serializers.ValidationError('Нельзя оставлять больше одного'
+                                              'отзыва!')
+        return data
 
 
 class CommentSerializer(serializers.ModelSerializer):

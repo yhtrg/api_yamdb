@@ -15,7 +15,7 @@ from rest_framework.serializers import ValidationError
 from api_yamdb.settings import SIGNUP_EMAIL_MESSAGE
 from rest_framework import permissions
 from .filters import TitleFilter
-from .permissions import IsAdmin, IsAdminUserOrReadOnly, IsAuthorOrAdmin
+from .permissions import IsAdmin, IsAdminUserOrReadOnly, IsAuthorOrAdmin, OnlyOwnAccount
 from .mixins import ListCreateDestroyViewSet
 from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer,
@@ -103,8 +103,8 @@ class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     permission_classes = (
         permissions.IsAuthenticatedOrReadOnly,
+        IsAuthorOrAdmin,
     )
-    pagination_class = LimitOffsetPagination
 
     @cached_property
     def _title(self) -> Title:
@@ -129,7 +129,6 @@ class CommentViewSet(viewsets.ModelViewSet):
         permissions.IsAuthenticatedOrReadOnly,
         IsAuthorOrAdmin,
     )
-    pagination_class = LimitOffsetPagination
 
     @cached_property
     def _review(self) -> Review:

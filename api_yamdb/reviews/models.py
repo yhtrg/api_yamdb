@@ -19,7 +19,7 @@ class Category(models.Model):
     class Meta:
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
-        ordering = ['name']
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
@@ -37,7 +37,7 @@ class Genre(models.Model):
     class Meta:
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
-        ordering = ['name']
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
@@ -65,7 +65,7 @@ class Title(models.Model):
     class Meta:
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
-        ordering = ['name']
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
@@ -98,6 +98,7 @@ class Review(models.Model):
         verbose_name_plural = "Отзывы"
         default_related_name = 'reviews'
         ordering = ('pub_date',)
+        unique_together = [['author', 'title']]
 
     def __str__(self) -> str:
         return self.text[:MODEL_STR_LIMIT]

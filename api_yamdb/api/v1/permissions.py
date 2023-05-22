@@ -17,17 +17,13 @@ class IsAdmin(permissions.BasePermission):
 
 
 class OnlyOwnAccount(permissions.BasePermission):
+    
     def has_object_permission(self, request, view, obj):
-        return obj.user == request.user
+        return obj.author == request.user
 
 
 class IsAuthorOrAdmin(permissions.BasePermission):
     """Permission for Review and Comment"""
-
-    def has_permission(self, request, view):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-        return False
 
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
