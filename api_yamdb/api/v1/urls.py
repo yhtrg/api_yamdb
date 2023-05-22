@@ -3,8 +3,7 @@ from rest_framework import routers
 from rest_framework_simplejwt.views import TokenRefreshView
 
 from .views import (CategoryViewSet, CommentViewSet, GenreViewSet,
-                    ReviewViewSet, TitleViewSet,
-                    UserViewSet, token, signup)
+                    ReviewViewSet, TitleViewSet, UserViewSet, signup, token)
 
 router = routers.DefaultRouter()
 
