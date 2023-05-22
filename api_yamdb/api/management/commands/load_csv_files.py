@@ -1,5 +1,4 @@
 import csv
-from typing import Any, Optional
 
 from django.conf import settings
 from django.core.management import BaseCommand
@@ -14,6 +13,7 @@ TABLES = {
     Comment: 'comments.csv',
 }
 
+
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         for model, csv_f in TABLES.items():
@@ -26,4 +26,5 @@ class Command(BaseCommand):
                 model.objects.bulk_create(
                     model(**data) for data in reader
                 )
-                self.stdout.write(self.style.SUCCESS('Данные успешно загружены.'))
+                self.stdout.write(
+                    self.style.SUCCESS('Данные успешно загружены.'))
