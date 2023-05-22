@@ -1,7 +1,6 @@
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from rest_framework.validators import UniqueTogetherValidator
 
 from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
@@ -27,7 +26,7 @@ class SignUpSerializer(serializers.Serializer):
         if data['username'] == 'me':
             raise ValidationError('Пользователь не может иметь имя "me"')
         return data
-    
+
     class Meta:
         model = User
         fields = ('email', 'username')
@@ -51,7 +50,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         slug_field='username',
         read_only=True,
     )
-    
+
     class Meta:
         model = Review
         fields = (

@@ -1,64 +1,62 @@
 from typing import List
 from django.db.models import Avg
-from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from django.utils.functional import cached_property
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, mixins, permissions, status, viewsets, response
-from rest_framework.pagination import LimitOffsetPagination
+from rest_framework import filters, permissions, status, viewsets, response
 from rest_framework.response import Response
+from django.db import IntegrityError
+from rest_framework_simplejwt.tokens import AccessToken
 from django.contrib.auth.tokens import default_token_generator
 from rest_framework.decorators import action, api_view
+from rest_framework.serializers import ValidationError
+from rest_framework import permissions
+
 from reviews.models import Category, Genre, Review, Title
 from users.models import User
-from rest_framework.serializers import ValidationError
-from api_yamdb.settings import SIGNUP_EMAIL_MESSAGE
-from rest_framework import permissions
 from .filters import TitleFilter
-from .permissions import IsAdmin, IsAdminUserOrReadOnly, IsAuthorOrAdmin, OnlyOwnAccount
+from .permissions import IsAdmin, IsAdminUserOrReadOnly, IsAuthorOrAdmin
 from .mixins import ListCreateDestroyViewSet
 from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer,
                           ReadOnlyTitleSerializer, ReviewSerializer,
                           SignUpSerializer, TitleSerializer, TokenSerializer,
                           UserSerializer)
-from django.db import IntegrityError
-from rest_framework_simplejwt.tokens import AccessToken
 
 
-@api_view(["POST"])
+@api_view(['POST'])
 def token(request):
     serializer = TokenSerializer(data=request.data)
     if serializer.is_valid():
-        user = get_object_or_404(User, username=request.data["username"])
-        confirmation_code = request.data["confirmation_code"]
+        user = get_object_or_404(User, username=request.data['username'])
+        confirmation_code = request.data['confirmation_code']
         if default_token_generator.check_token(user, confirmation_code):
             token = AccessToken.for_user(user)
             response = {
-                "username": request.data["username"],
-                "token": str(token),
+                'username': request.data['username'],
+                'token': str(token),
             }
             return Response(response, status=status.HTTP_200_OK)
-        raise ValidationError(detail="Неверный код подтверждения.")
+        raise ValidationError(detail='Неверный код подтверждения.')
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(["POST"])
+@api_view(['POST'])
 def signup(request):
     serializer = SignUpSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     try:
         user = User.objects.get_or_create(
-            username=serializer.validated_data["username"],
-            email=serializer.validated_data["email"],
+            username=serializer.validated_data['username'],
+            email=serializer.validated_data['email'],
         )[0]
     except IntegrityError as e:
         return Response(data=repr(e), status=status.HTTP_400_BAD_REQUEST)
     confirmation_code = default_token_generator.make_token(user)
     user.email_user(
-        subject="Сonfirmation code",
-        message=f"Yamdb. Код подтверждения -  {confirmation_code}",
-        from_email="administration@yamdb.com",
+        subject='Сonfirmation code',
+        message=f'Yamdb. Код подтверждения -  {confirmation_code}',
+        from_email='administration@yamdb.com',
     )
     return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -67,23 +65,23 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAdmin]
-    lookup_field = "username"
+    lookup_field = 'username'
     filter_backends = (filters.SearchFilter,)
-    search_fields = ("username",)
+    search_fields = ('username',)
 
     def update(self, request, *args, **kwargs):
-        if request.method == "PUT":
+        if request.method == 'PUT':
             return response.Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
         return super().update(request, *args, **kwargs)
-    
+
     @action(
         detail=False,
-        methods=["GET", "PATCH"],
-        url_path="me",
+        methods=['GET', 'PATCH'],
+        url_path='me',
         permission_classes=[permissions.IsAuthenticated],
     )
     def get_self_user_page(self, request):
-        if request.method == "GET":
+        if request.method == 'GET':
             serializer = self.serializer_class(request.user)
             return response.Response(
                 serializer.data,

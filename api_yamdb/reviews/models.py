@@ -1,9 +1,8 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+
 from users.models import User
-
 from api_yamdb.settings import MODEL_STR_LIMIT
-
 from .validators import validate_year
 
 
@@ -87,15 +86,15 @@ class Review(models.Model):
         verbose_name="Оценка",
         validators=[MinValueValidator(1), MaxValueValidator(10)],
     )
-    
+
     pub_date = models.DateTimeField(
         verbose_name='Дата добавления',
         auto_now_add=True,
     )
 
     class Meta:
-        verbose_name = "Отзыв"
-        verbose_name_plural = "Отзывы"
+        verbose_name = 'Отзыв'
+        verbose_name_plural = 'Отзывы'
         default_related_name = 'reviews'
         ordering = ('pub_date',)
         unique_together = [['author', 'title']]
@@ -122,8 +121,8 @@ class Comment(models.Model):
     )
 
     class Meta:
-        verbose_name = "Комментарий"
-        verbose_name_plural = "Комментарии"
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
         default_related_name = 'comments'
         ordering = ('pub_date',)
 

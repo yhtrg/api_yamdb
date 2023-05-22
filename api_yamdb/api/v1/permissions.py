@@ -23,7 +23,6 @@ class OnlyOwnAccount(permissions.BasePermission):
 
 
 class IsAuthorOrAdmin(permissions.BasePermission):
-    """Permission for Review and Comment"""
 
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:

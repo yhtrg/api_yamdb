@@ -46,21 +46,21 @@ class User(AbstractUser):
             'unique': ('электронная почта уже зарегистрирована.'),
         },
     )
-    bio = models.TextField(verbose_name="опишите себя", blank=True)
+    bio = models.TextField(verbose_name='опишите себя', blank=True)
     is_active = models.BooleanField(default=True)
     role = models.CharField(
-        verbose_name="роль",
+        verbose_name='роль',
         max_length=60,
         choices=CHOICES,
         null=False,
         default=USER,
     )
 
-    REQUIRED_FIELDS = ["email"]
+    REQUIRED_FIELDS = ['email"']
 
     def save(self, *args, **kwargs):
-        if self.username == "me":
-            return ValidationError("Username не может быть 'me'.")
+        if self.username == 'me':
+            return ValidationError('Username не может быть "me".')
         else:
             super().save(*args, **kwargs)
 
@@ -87,13 +87,12 @@ class User(AbstractUser):
 
     class Meta:
 
-        verbose_name = "пользователь"
-        verbose_name_plural = "пользователи"
+        verbose_name = 'пользователь'
+        verbose_name_plural = 'пользователи'
         constraints = [
             models.CheckConstraint(
-                check=~models.Q(username="me"),
-                name="Пользователь не может быть назван me!",
+                check=~models.Q(username='me'),
+                name='Пользователь не может быть назван me!',
             )
         ]
         ordering = ('username',)
-        
