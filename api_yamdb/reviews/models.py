@@ -2,9 +2,8 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from users.models import User
-from api_yamdb.settings import (MODEL_STR_LIMIT,
-                                MIN_VAL,
-                                MAX_VAL)
+from django.conf import settings
+
 from .validators import validate_year
 
 
@@ -86,8 +85,8 @@ class Review(models.Model):
     )
     score = models.PositiveSmallIntegerField(
         verbose_name='Оценка',
-        validators=[MinValueValidator(MIN_VAL),
-                    MaxValueValidator(MAX_VAL)],
+        validators=[MinValueValidator(settings.MIN_VAL),
+                    MaxValueValidator(settings.MAX_VAL)],
     )
 
     pub_date = models.DateTimeField(
@@ -103,7 +102,7 @@ class Review(models.Model):
         unique_together = [['author', 'title']]
 
     def __str__(self) -> str:
-        return self.text[:MODEL_STR_LIMIT]
+        return self.text[:settings.MODEL_STR_LIMIT]
 
 
 class Comment(models.Model):
@@ -130,4 +129,4 @@ class Comment(models.Model):
         ordering = ('pub_date',)
 
     def __str__(self) -> str:
-        return self.text[:MODEL_STR_LIMIT]
+        return self.text[:settings.MODEL_STR_LIMIT]
