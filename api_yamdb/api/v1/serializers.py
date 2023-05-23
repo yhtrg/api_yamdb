@@ -1,10 +1,10 @@
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-
-from api_yamdb.settings import EMAIL_LEN, USER_LEN
 from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
+
+from api_yamdb.settings import EMAIL_LEN, USER_LEN
 
 
 class TokenSerializer(serializers.Serializer):
@@ -70,7 +70,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         author = self.context.get('request').user
         title_id = self.context.get('view').kwargs['title_id']
         method = self.context.get('request').method
-        if (Review.objects.filter(author=author, title=title_id).exists()
+        if (author.reviews.filter(title=title_id).exists()
                 and method == 'POST'):
             raise serializers.ValidationError('Нельзя оставлять больше одного'
                                               'отзыва!')

@@ -9,12 +9,12 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, permissions, response, status, viewsets
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
-from rest_framework.serializers import ValidationError
 from rest_framework_simplejwt.tokens import AccessToken
-
-from api_yamdb.settings import DOMAIN_NAME
 from reviews.models import Category, Genre, Review, Title
 from users.models import User
+
+from api_yamdb.settings import DOMAIN_NAME
+
 from .filters import TitleFilter
 from .mixins import ListCreateDestroyViewSet
 from .permissions import IsAdmin, IsAdminUserOrReadOnly, IsAuthorOrAdmin
@@ -27,17 +27,14 @@ from .serializers import (CategorySerializer, CommentSerializer,
 @api_view(['POST'])
 def token(request):
     serializer = TokenSerializer(data=request.data)
-    if serializer.is_valid():
-        user = get_object_or_404(User, username=request.data['username'])
-        confirmation_code = request.data['confirmation_code']
-        if default_token_generator.check_token(user, confirmation_code):
-            token = AccessToken.for_user(user)
-            response = {
-                'username': request.data['username'],
-                'token': str(token),
-            }
-            return Response(response, status=status.HTTP_200_OK)
-        raise ValidationError(detail='Неверный код подтверждения.')
+    serializer.is_valid(raise_exception=True)
+    user = get_object_or_404(User, username=request.data['username'])
+    confirmation_code = request.data['confirmation_code']
+    if default_token_generator.check_token(user, confirmation_code):
+        token = AccessToken.for_user(user)
+        response = {
+            'username': request.data['username'], 'token': str(token), }
+        return Response(response, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

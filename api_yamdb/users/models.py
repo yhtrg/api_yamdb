@@ -55,7 +55,7 @@ class User(AbstractUser):
         default=USER,
     )
 
-    REQUIRED_FIELDS = ['email"']
+    REQUIRED_FIELDS = []
 
     def save(self, *args, **kwargs):
         if self.username == 'me':
