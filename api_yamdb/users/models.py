@@ -3,17 +3,17 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.exceptions import ValidationError
 from django.db import models
 
-USER = 'user'
-ADMIN = 'admin'
-MODERATOR = 'moderator'
-
-CHOICES = (
-    (ADMIN, 'Администратор'),
-    (USER, 'Аутентифицированный пользователь'),
-    (MODERATOR, "Модератор"),)
-
 
 class User(AbstractUser):
+    USER = 'user'
+    ADMIN = 'admin'
+    MODERATOR = 'moderator'
+
+    CHOICES = (
+        (ADMIN, 'Администратор'),
+        (USER, 'Аутентифицированный пользователь'),
+        (MODERATOR, "Модератор"),)
+
     username_validator = UnicodeUsernameValidator()
 
     username = models.CharField(
@@ -60,20 +60,19 @@ class User(AbstractUser):
     def save(self, *args, **kwargs):
         if self.username == 'me':
             return ValidationError('Username не может быть "me".')
-        else:
-            super().save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     @property
     def is_moderator(self):
-        return self.role == MODERATOR
+        return self.role == User.MODERATOR
 
     @property
     def is_admin(self):
-        return self.is_superuser or self.role == ADMIN
+        return self.is_superuser or self.role == User.ADMIN
 
     @property
     def is_user(self):
-        return self.role == USER
+        return self.role == User.USER
 
     def get_full_name(self) -> str:
         return self.username

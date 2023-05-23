@@ -1,6 +1,8 @@
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+
+from api_yamdb.settings import EMAIL_LEN, USER_LEN
 from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
 
@@ -14,12 +16,12 @@ class TokenSerializer(serializers.Serializer):
 
 
 class SignUpSerializer(serializers.Serializer):
-    email = serializers.EmailField(max_length=254,
+    email = serializers.EmailField(max_length=EMAIL_LEN,
                                    allow_blank=False,
                                    required=True)
     username = serializers.RegexField(regex=r'^[\w.@+-]+$',
                                       required=True,
-                                      max_length=150)
+                                      max_length=USER_LEN)
 
     def validate(self, data):
         if data['username'] == 'me':

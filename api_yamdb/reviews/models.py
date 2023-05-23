@@ -1,9 +1,10 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+
 from users.models import User
-
-from api_yamdb.settings import MODEL_STR_LIMIT
-
+from api_yamdb.settings import (MODEL_STR_LIMIT,
+                                MIN_VAL,
+                                MAX_VAL)
 from .validators import validate_year
 
 
@@ -47,7 +48,7 @@ class Title(models.Model):
     name = models.CharField(
         verbose_name='Название',
         max_length=256)
-    year = models.IntegerField(
+    year = models.PositiveSmallIntegerField(
         verbose_name='Год релиза',
         validators=[validate_year])
     description = models.TextField(
@@ -83,9 +84,10 @@ class Review(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Автор'
     )
-    score = models.IntegerField(
-        verbose_name="Оценка",
-        validators=[MinValueValidator(1), MaxValueValidator(10)],
+    score = models.PositiveSmallIntegerField(
+        verbose_name='Оценка',
+        validators=[MinValueValidator(MIN_VAL),
+                    MaxValueValidator(MAX_VAL)],
     )
 
     pub_date = models.DateTimeField(

@@ -11,9 +11,10 @@ from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 from rest_framework_simplejwt.tokens import AccessToken
+
+from api_yamdb.settings import DOMAIN_NAME
 from reviews.models import Category, Genre, Review, Title
 from users.models import User
-
 from .filters import TitleFilter
 from .mixins import ListCreateDestroyViewSet
 from .permissions import IsAdmin, IsAdminUserOrReadOnly, IsAuthorOrAdmin
@@ -55,7 +56,7 @@ def signup(request):
     user.email_user(
         subject='Сonfirmation code',
         message=f'Yamdb. Код подтверждения -  {confirmation_code}',
-        from_email='administration@yamdb.com',
+        from_email=DOMAIN_NAME,
     )
     return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -129,7 +130,8 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     @cached_property
     def _review(self) -> Review:
-        return get_object_or_404(Review, id=self.kwargs.get('review_id'))
+        return get_object_or_404(Review, id=self.kwargs.get('review_id'),
+                                 title__id=self.kwargs.get('title_id'))
 
     def get_queryset(self) -> List[Review]:
         return self._review.comments.all()

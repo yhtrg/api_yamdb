@@ -164,3 +164,11 @@ else:
 MODEL_STR_LIMIT = 15
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+MIN_VAL = 1
+MAX_VAL = 10
+
+EMAIL_LEN = 254
+USER_LEN = 150
+
+DOMAIN_NAME = 'administration@yamdb.com'
