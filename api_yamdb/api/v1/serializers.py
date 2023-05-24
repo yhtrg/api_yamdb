@@ -4,7 +4,6 @@ from rest_framework.exceptions import ValidationError
 
 from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
-
 from api_yamdb.settings import EMAIL_LEN, USER_LEN
 
 

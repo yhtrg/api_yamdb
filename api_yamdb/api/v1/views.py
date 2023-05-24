@@ -9,11 +9,10 @@ from rest_framework import filters, permissions, response, status, viewsets
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
+
 from reviews.models import Category, Genre, Review, Title
 from users.models import User
-
 from api_yamdb.settings import DOMAIN_NAME
-
 from .filters import TitleFilter
 from .mixins import ListCreateDestroyViewSet
 from .permissions import IsAdmin, IsAdminUserOrReadOnly, IsAuthorOrAdmin
