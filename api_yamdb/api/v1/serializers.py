@@ -1,9 +1,9 @@
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+
 from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
-
 from api_yamdb.settings import EMAIL_LEN, USER_LEN
 
 
@@ -16,21 +16,32 @@ class TokenSerializer(serializers.Serializer):
 
 
 class SignUpSerializer(serializers.Serializer):
+    queryset = User.objects.all()
     email = serializers.EmailField(max_length=EMAIL_LEN,
                                    allow_blank=False,
-                                   required=True)
+                                   required=True,)
     username = serializers.RegexField(regex=r'^[\w.@+-]+$',
                                       required=True,
-                                      max_length=USER_LEN)
-
-    def validate(self, data):
-        if data['username'] == 'me':
-            raise ValidationError('Пользователь не может иметь имя "me"')
-        return data
+                                      max_length=USER_LEN,)
 
     class Meta:
         model = User
         fields = ('email', 'username')
+
+    def validate(self, data):
+        if data['username'].lower() == 'me':
+            raise ValidationError('Имя me недоступно.')
+
+        if User.objects.filter(email=data['email'],
+                               username=data['username']).exists():
+            return data
+
+        if User.objects.filter(email=data['email']).exists():
+            raise ValidationError('Этот email уже используется.')
+
+        if User.objects.filter(username=data['username']).exists():
+            raise ValidationError('Это имя уже занято.')
+        return data
 
 
 class UserSerializer(serializers.ModelSerializer):
