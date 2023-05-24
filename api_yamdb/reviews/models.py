@@ -1,9 +1,9 @@
 from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from users.models import User  # Не могу отправить проект в соответ. с PEP-8
 
-from users.models import User
-from .validators import validate_year
+from .validators import validate_year  # Тесты яндекса не позволяют.
 
 
 class Category(models.Model):
