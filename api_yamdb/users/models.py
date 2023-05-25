@@ -64,15 +64,15 @@ class User(AbstractUser):
 
     @property
     def is_moderator(self):
-        return self.role == User.MODERATOR
+        return self.role == self.MODERATOR
 
     @property
     def is_admin(self):
-        return self.is_superuser or self.role == User.ADMIN
+        return self.is_superuser or self.role == self.ADMIN
 
     @property
     def is_user(self):
-        return self.role == User.USER
+        return self.role == self.USER
 
     def get_full_name(self) -> str:
         return self.username
